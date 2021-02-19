@@ -6,11 +6,15 @@ use Sabre\HTTP;
 
 require __DIR__ . '/../vendor/autoload.php';
 
+
+$injector = include('Dependencies.php');
+
+
 error_reporting(E_ALL);
 $environment = 'development';
 
 /**
- * Error hanlder register
+ * Error handler register
  */
 
 $whoops = new \Whoops\Run;
@@ -25,10 +29,8 @@ if($environment !== 'production'){
  }
 $whoops->register();
 
+// Router register
 
-
-$request = HTTP\Sapi::getRequest();
-$response = new HTTP\Response();
 
 
 $routeDefinitionCallback = function (\FastRoute\RouteCollector $r) {
@@ -67,11 +69,12 @@ switch ($routeInfo[0]) {
         $method = $routeInfo[1][1];
         $vars = $routeInfo[2];
         
-        $class = new $className($response);
+        $class = $injector->make($className);
         $class->$method($vars);
         break;
 }
 
 
+// send response to client
 
 HTTP\Sapi::sendResponse($response);

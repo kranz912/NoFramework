@@ -2,19 +2,24 @@
 
 namespace NoFramework\Controller;
 
-use Sabre\HTTP;
+use Sabre\HTTP\Request;
+use Sabre\HTTP\Response;
 
 class HomeController
 {
     private $response;
-
-    public function __construct(HTTP\Response  $response){
+    private $request;
+    public function __construct(Response  $response,Request $request){
         $this->response = $response;
+        $this->request = $request;
     }
 
     public function index(){
+        $content = '<h1>Hello</h1>';
+        $content .= ''. $this->request->getQueryParameters()['name'];
+
         $this->response->setBody(
-            'Hello World'
+           $content
         );
     }
 }
